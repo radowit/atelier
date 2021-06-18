@@ -1,43 +1,45 @@
 name: Run linters and tests
 
-on:
-  pull_request:
-    branches: 
-      - '**'
-  push:
-    branches:
-      - main
-      - release/*
+on: pull_request
 
 jobs:
-  build:
-
+  lint_and_test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: [3.9]
-
     steps:
-    - uses: actions/checkout@v1
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install Poetry Action
-      uses: snok/install-poetry@v1.1.6
-    - name: Install dependencies
-      run: make install
-    - name: Check formatting
-      run: make lint-black
-    - name: Check import sorting
-      run: make lint-isort
-    - name: Check style guide
-      run: make lint-pycodestyle
-    - name: Check security
-      run: make lint-bandit
-    - name: Check typing
-      run: make lint-mypy
-    - name: Check pylint
-      run: make lint-pylint
-    - name: Run unit tests
-      run: make test-cov
+      - name: Check out repository
+        uses: actions/checkout@v2
+      - name: Set up python 
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - name: Install Poetry
+        uses: snok/install-poetry@v1.1.6
+        with:
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+      - name: Load cached venv
+        id: cached-poetry-dependencies
+        uses: actions/cache@v2
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
+      - name: Install dependencies
+        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+        run: poetry install --no-interaction --no-root
+      - name: Install project
+        run: poetry install --no-interaction
+      - name: Check formatting
+        run: make lint-black
+      - name: Check import sorting
+        run: make lint-isort
+      - name: Check style guide
+        run: make lint-pycodestyle
+      - name: Check security
+        run: make lint-bandit
+      - name: Check typing
+        run: make lint-mypy
+      - name: Check pylint
+        run: make lint-pylint
+      - name: Run unit tests
+        run: make test-cov
+

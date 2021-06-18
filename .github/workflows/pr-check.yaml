@@ -29,17 +29,30 @@ jobs:
       - name: Install project
         run: poetry install --no-interaction
       - name: Check formatting
-        run: make lint-black
+        run: |
+          source .venv/bin/activate
+          make lint-black
       - name: Check import sorting
-        run: make lint-isort
+        run: |
+          source .venv/bin/activate
+          make lint-isort
       - name: Check style guide
-        run: make lint-pycodestyle
+        run: |
+          source .venv/bin/activate
+          make lint-pycodestyle
       - name: Check security
-        run: make lint-bandit
+        run: |
+          source .venv/bin/activate
+          make lint-bandit
       - name: Check typing
-        run: make lint-mypy
+        run: |
+          source .venv/bin/activate
+          make lint-mypy
       - name: Check pylint
-        run: make lint-pylint
+        run: |
+          source .venv/bin/activate
+          make lint-pylint
       - name: Run unit tests
-        run: make test-cov
-
+        run: |
+          source .venv/bin/activate
+          make test-cov

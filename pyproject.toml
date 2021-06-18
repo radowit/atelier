@@ -8,7 +8,7 @@ authors = ["Radosław Ganczarek <radoslaw@ganczarek.in>"]
 python = "^3.9"
 
 [tool.poetry.dev-dependencies]
-pytest = "^5.2"
+pytest = "^6.2"
 black = "^21.6b0"
 isort = "^5.8.0"
 pylint = "^2.8.3"
